@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vegetable Gallery</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #2f855a;
+  }
+
+  /* Category Bar */
+  .category-bar {
+    display: flex;
+    overflow-x: auto;
+    gap: 12px;
+    padding: 10px 0;
+    margin-bottom: 30px;
+    scrollbar-width: none;
+  }
+  .category-bar::-webkit-scrollbar { display: none; }
+
+  .category {
+    flex: 0 0 auto;
+    background-color: #fff;
+    color: #2f855a;
+    border: 1px solid #2f855a;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .category:hover,
+  .category.active {
+    background-color: #2f855a;
+    color: #fff;
+  }
+
+  /* Card Container */
+  .card-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+    justify-items: center;
+  }
+
+  /* Card Design */
+  .card {
+    background: #fff;
+    width: 100%;
+    max-width: 220px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-6px);
+  }
+
+  .card img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+  }
+
+  .card-content {
+    padding: 12px;
+    text-align: center;
+  }
+
+  .card-content h3 {
+    font-size: 16px;
+    color: #2f855a;
+    margin: 0;
+  }
+
+  /* Responsive Layout */
+  @media (max-width: 1024px) {
+    .card-container {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .card-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1>Fresh Vegetables</h1>
+
+<!-- Category Bar -->
+<div class="category-bar">
+  <div class="category active" data-category="all">All</div>
+  <div class="category" data-category="leafy">Leafy Vegetables</div>
+  <div class="category" data-category="root">Root Vegetables</div>
+  <div class="category" data-category="fruity">Fruity Vegetables</div>
+  <div class="category" data-category="organic">Organic</div>
+</div>
+
+<!-- Cards -->
+<div class="card-container">
+
+  <div class="card" data-category="fruity">
+    <img src="https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?auto=format&fit=crop&w=800&q=80" alt="Tomatoes">
+    <div class="card-content">
+      <h3>Fresh Tomatoes</h3>
+    </div>
+  </div>
+
+  <div class="card" data-category="leafy">
+    <img src="https://images.unsplash.com/photo-1582515073490-dc84c8e2c687?auto=format&fit=crop&w=800&q=80" alt="Cabbage">
+    <div class="card-content">
+      <h3>Green Cabbage</h3>
+    </div>
+  </div>
+
+  <div class="card" data-category="root">
+    <img src="https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=format&fit=crop&w=800&q=80" alt="Carrots">
+    <div class="card-content">
+      <h3>Organic Carrots</h3>
+    </div>
+  </div>
+
+  <div class="card" data-category="leafy organic">
+    <img src="https://images.unsplash.com/photo-1613470208966-1f4e65f1bdb0?auto=format&fit=crop&w=800&q=80" alt="Broccoli">
+    <div class="card-content">
+      <h3>Organic Broccoli</h3>
+    </div>
+  </div>
+
+  <div class="card" data-category="root organic">
+    <img src="https://images.unsplash.com/photo-1506807803488-8eafc15316c2?auto=format&fit=crop&w=800&q=80" alt="Potatoes">
+    <div class="card-content">
+      <h3>Fresh Potatoes</h3>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const categories = document.querySelectorAll('.category');
+  const cards = document.querySelectorAll('.card');
+
+  categories.forEach(cat => {
+    cat.addEventListener('click', () => {
+      // Remove active class from all
+      categories.forEach(c => c.classList.remove('active'));
+      cat.classList.add('active');
+
+      const selected = cat.dataset.category;
+
+      cards.forEach(card => {
+        if (selected === 'all' || card.dataset.category.includes(selected)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
