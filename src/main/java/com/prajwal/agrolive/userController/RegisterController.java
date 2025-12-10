@@ -10,7 +10,8 @@ import com.prajwal.agrolive.userServices.UserRegister;
 @Controller
 public class RegisterController {
 
-    @Autowired
+    @SuppressWarnings("unused")
+	@Autowired
     private UserRepo userRepository;
     
     @Autowired

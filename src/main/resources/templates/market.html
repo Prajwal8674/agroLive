@@ -63,6 +63,7 @@
         .nav-pills .nav-item {
             display: inline-block;
         }
+        
     </style>
 </head>
 
@@ -83,7 +84,7 @@
                 <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
                     <div class="navbar-nav mx-auto">
                         <a href="index.html" class="nav-item nav-link">Home</a>
-                        <a href="prices.html" class="nav-item nav-link active">Prices</a>
+                        <a href="market.html" class="nav-item nav-link active">Market</a>
                         <a href="shop-detail.html" class="nav-item nav-link">Shop Detail</a>
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
@@ -128,27 +129,26 @@
                         </div>
                     </div>
               
-                    <div class="col-lg-8 text-end">
-                        <ul class="nav nav-pills d-inline-flex text-center mb-5" id="categoryTabs" role="tablist">
-                            <li class="nav-item">
-                                <a class="d-flex m-2 py-2 bg-light rounded-pill active"
-                                    data-bs-toggle="pill"
-                                    href="#tab-all" role="tab">
-                                    <span class="text-dark" style="width: 130px;">All Commodities</span>
-                                </a>
-                            </li>
-                           
-                            <li class="nav-item" th:each="cat,iterStat : ${categorizedCommodities}">
-                                <a class="d-flex m-2 py-2 bg-light rounded-pill"
-                                    th:href="'#tab-' + ${iterStat.index}" 
-                                    data-bs-toggle="pill" role="tab"
-                                    th:text="${cat.key}">
-                                    Category
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                  <div class="col-lg-8 text-end">
+    <div class="overflow-auto" style="white-space: nowrap;">
+        <ul class="nav nav-pills d-inline-flex text-center flex-nowrap" id="categoryTabs" role="tablist">
+            <li class="nav-item d-inline-block">
+                <a class="d-flex m-2 py-2 bg-light rounded-pill active" data-bs-toggle="pill" href="#tab-all">
+                    <span class="text-dark" style="width: 130px;">All Commodities</span>
+                </a>
+            </li>
+            <li class="nav-item d-inline-block" th:each="cat,iterStat : ${categorizedCommodities}">
+                <a class="d-flex m-2 py-2 bg-light rounded-pill" 
+                   th:href="'#tab-' + ${iterStat.index}" 
+                   data-bs-toggle="pill" role="tab"
+                   th:text="${cat.key}">
+                   Category
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
 
                 <div class="tab-content">
                     <div class="tab-pane fade show active p-0" id="tab-all" role="tabpanel">

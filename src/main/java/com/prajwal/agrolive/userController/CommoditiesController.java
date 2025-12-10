@@ -9,97 +9,86 @@ import java.util.*;
 @Controller
 public class CommoditiesController {
 
-    @GetMapping("/commodities")
+    @GetMapping("/market")
     public String getCommodityCategories(Model model) {
 
         Map<String, List<String>> categoryMap = getCategoryMap();
 
         model.addAttribute("categorizedCommodities", categoryMap);
 
-        return "commodities";  // loads onlyCommodities.html
+        return "market";
     }
 
-    // FINAL CATEGORY MAP
     private Map<String, List<String>> getCategoryMap() {
 
         Map<String, List<String>> map = new LinkedHashMap<>();
 
-        map.put("Foodgrains & Cereals", Arrays.asList(
-                "Paddy", "Rice", "Wheat", "Jowar", "Bajra",
-                "Maize", "Ragi", "Barley", "Korra", "Sama",
-                "Varagu", "Broken Rice", "Wheat Atta", "Suji",
-                "Maida", "Dalia", "Macaroni", "Vermicelli"
-        ));
-
-        map.put("Pulses", Arrays.asList(
-                "Red Gram", "Green Gram", "Black Gram",
-                "Bengal Gram", "Lentil", "Peas", "Moth",
-                "Kabuli Chana", "Horse Gram"
-        ));
-
-        map.put("Oilseeds", Arrays.asList(
-                "Groundnut", "Sesamum Seeds", "Mustard Seeds",
-                "Sunflower Seed", "Soybean", "Castor Seed",
-                "Linseed", "Rapeseed", "Niger Seed",
-                "Safflower", "Kusum seed", "Pongam seeds"
-        ));
-
-        map.put("Edible Oils", Arrays.asList(
-                "Mustard Oil", "Soybean Oil", "Sunflower Oil",
-                "Groundnut Oil", "Cottonseed Oil", "Rice Bran Oil",
-                "Sesame Oil", "Palm Oil", "Castor Oil", "Linseed Oil"
-        ));
-
-        map.put("Oil Cakes", Arrays.asList(
-                "Groundnut Cake", "Mustard Cake", "Soybean Cake",
-                "Cottonseed Cake", "Sunflower Cake",
-                "Castor Cake", "Linseed Cake", "Rapeseed Cake"
-        ));
-
-        map.put("Vegetables", Arrays.asList(
-                "Potato", "Onions", "Tomatoes", "Cabbage",
-                "Cauliflower", "Capsicum", "Brinjal", "Beans",
-                "Pumpkin", "Carrot", "Spinach", "Coriander Leaves",
-                "Fenugreek Leaves", "Curry Leaves", "Drumsticks",
-                "Green Chilli", "Red Chilli", "Bottle Gourd",
-                "Bitter Gourd", "Snake Gourd"
-        ));
-
+        // Fruits
         map.put("Fruits", Arrays.asList(
-                "Apple", "Banana", "Grapes", "Mango",
-                "Orange", "Sweet Lime", "Lemon", "Papaya",
-                "Custard Apple", "Pear", "Plums",
-                "Watermelon", "Melons", "Amla", "Litchi",
-                "Pineapple", "Cherries", "Grapefruit"
+                "Nutmeg", "Tamarind Fruit", "Banana", "Kinnow", "Papaya(Raw)",
+                "Apple", "Mango(Raw-Ripe)", "Mousambi(Sweet Lime)", "Pomegranate",
+                "Banana - Green", "Coconut Seed", "Guava", "Pineapple", "Kiwi Fruit", "Papaya"
         ));
 
-        map.put("Spices & Condiments", Arrays.asList(
-                "Turmeric", "Cardamom", "Pepper", "Clove",
-                "Cumin", "Coriander", "Fenugreek", "Nutmeg",
-                "Saffron", "Garlic", "Ginger",
-                "Chillies", "Seedless Tamarind"
+        // Vegetables
+        map.put("Vegetables", Arrays.asList(
+                "Rajgir", "Surat Beans(Papadi)", "Millets", "Methi(Leaves)", "Rat Tail Radish(Mogari)",
+                "Turnip", "Snakeguard", "Potato", "Asparagus", "Mustard", "Marget", "Maize",
+                "White Muesli", "Little gourd(Kundru)", "Karbuja(Musk Melon)", "Knool Khol",
+                "Peas cod", "Brinjal", "Galgal(Lemon)", "Green Chilli", "Field Pea", "Green Avare(W)",
+                "Ashgourd", "Tube Flower", "Sponge gourd", "Squash(Chappal Kadoo)", "Yam(Ratalu)",
+                "Marigold(Calcutta)", "Water Melon", "Pumpkin", "Ridgeguard(Tori)", "Round gourd",
+                "Cowpea(Veg)", "Ladies Finger (Bhindi)", "Green Peas", "French Beans(Frasbean)",
+                "Indian Beans(Seam)", "Tomato", "Onion Green", "Bitter gourd", "Cauliflower",
+                "Cucumbar(Kheera)", "Cowpea(Lobia/Karamani)", "Pointed gourd(Parval)", "Sweet Pumpkin"
         ));
 
-        map.put("Dry Fruits & Nuts", Arrays.asList(
-                "Cashew Kernels", "Walnuts", "Arecanuts",
-                "Ball Copra", "Cup Copra", "Dry Coconut"
+        // Pulses / Legumes
+        map.put("Pulses", Arrays.asList(
+                "Kabuli Chana(Chickpeas-White)", "Masur Dal", "Moath Dal", "Black Gram(Urd Beans)(Whole)",
+                "Pegeon Pea(Arhar Fali)", "Green Gram Dal(Moong Dal)", "Bengal Gram(Gram)(Whole)",
+                "Peas Wet", "White Peas", "Arhar(Tur/Red Gram)(Whole)", "Other Pulses",
+                "Bengal Gram Dal(Chana Dal)", "Black Gram Dal(Urd Dal)", "Lentil(Masur)(Whole)",
+                "Green Gram(Moong)(Whole)"
         ));
 
-        map.put("Fiber Crops", Arrays.asList(
-                "Cotton", "Jute", "Hemp", "Kenaf", "Flax"
+        // Oilseeds / Seeds / Spices
+        map.put("Oilseeds / Seeds / Spices", Arrays.asList(
+                "Sesamum(Sesame,Gingelly,Til)", "Cummin Seed(Jeera)", "Guar Seed(Cluster Beans Seed)",
+                "Cardamoms", "Nigella seeds", "Poppy seeds", "Mustard Oil", "Coriander(Leaves)",
+                "Ajwan", "Methi Seeds", "Suva(Dill Seed)", "Linseed", "Neem Seed", "Coconut Oil"
         ));
 
-        map.put("Dairy & Poultry", Arrays.asList(
-                "Milk", "Eggs", "Poultry Meat", "Honey"
+        // Grains / Cereals / Millets
+        map.put("Grains / Cereals / Millets", Arrays.asList(
+                "Maize", "Paddy(Basmati)", "Jowar(Sorghum)", "Rice", "Bajra(Pearl Millet/Cumbu)",
+                "Paddy(Common)", "Kodo Millet(Varagu)", "Barley(Jau)", "Wheat"
         ));
 
-        map.put("Other Products", Arrays.asList(
-                "Gur (Jaggery)", "Sugar", "Tea", "Coffee",
-                "Tamarind", "Gum / Resin", "Coconut"
+        // Herbs / Medicinal Plants
+        map.put("Herbs / Medicinal Plants", Arrays.asList(
+                "Giloy", "Asgand", "Mint(Pudina)", "Amla(Nelli Kai)", "Absinthe"
+        ));
+
+        // Flowers / Ornamentals
+        map.put("Flowers / Ornamentals", Arrays.asList(
+                "Rose(Local)", "Jasmine", "Chrysanthemum(Loose)", "Chrysanthemum",
+                "Marigold(loose)", "Tube Rose(Loose)", "Tube Rose(Double)", "Tube Rose(Single)",
+                "Carnation"
+        ));
+
+        // Dairy / Meat / Animal Products
+        map.put("Dairy / Meat / Animal Products", Arrays.asList(
+                "Fish", "Goat", "Cow", "She Buffalo", "Ghee", "Egg"
+        ));
+
+        // Others / Miscellaneous
+        map.put("Others / Miscellaneous", Arrays.asList(
+                "Dry Chillies", "Groundnut", "Groundnut pods(raw)", "Tapioca", "Sugar",
+                "Dry Fodder", "Green Fodder", "Cotton", "Firewood", "Wood", "Rubber",
+                "Cocoa", "Coffee", "Gur(Jaggery)"
         ));
 
         return map;
     }
-    
-    
 }
