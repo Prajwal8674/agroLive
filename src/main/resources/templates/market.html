@@ -83,8 +83,8 @@
                 </button>
                 <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
                     <div class="navbar-nav mx-auto">
-                        <a href="index.html" class="nav-item nav-link">Home</a>
-                        <a href="market.html" class="nav-item nav-link active">Market</a>
+                        <a th:href="@{/}" class="nav-item nav-link">Home</a>
+                        <a th:href="@{/market}" class="nav-item nav-link active">Market</a>
                         <a href="shop-detail.html" class="nav-item nav-link">Shop Detail</a>
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
@@ -98,8 +98,6 @@
                         <a href="contact.html" class="nav-item nav-link">Contact</a>
                     </div>
                     <div class="d-flex m-3 me-0">
-                        <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4"
-                            data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
                         <a href="#" class="position-relative me-4 my-auto">
                             <i class="fa fa-shopping-bag fa-2x"></i>
                             <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1"
@@ -129,26 +127,34 @@
                         </div>
                     </div>
               
-                  <div class="col-lg-8 text-end">
+       <div class="col-lg-8 text-end">
     <div class="overflow-auto" style="white-space: nowrap;">
         <ul class="nav nav-pills d-inline-flex text-center flex-nowrap" id="categoryTabs" role="tablist">
+
+            <!-- All Commodities -->
             <li class="nav-item d-inline-block">
-                <a class="d-flex m-2 py-2 bg-light rounded-pill active" data-bs-toggle="pill" href="#tab-all">
+                <a class="nav-link d-flex m-2 py-2 bg-light rounded-pill active"
+                   data-bs-toggle="pill"
+                   href="#tab-all">
                     <span class="text-dark" style="width: 130px;">All Commodities</span>
                 </a>
             </li>
-            <li class="nav-item d-inline-block" th:each="cat,iterStat : ${categorizedCommodities}">
-                <a class="d-flex m-2 py-2 bg-light rounded-pill" 
-                   th:href="'#tab-' + ${iterStat.index}" 
-                   data-bs-toggle="pill" role="tab"
-                   th:text="${cat.key}">
-                   Category
-                </a>
-            </li>
-        </ul>
-    </div>
-</div>
 
+            <!-- Dynamic Categories -->
+
+                            <li class="nav-item d-inline-block" th:each="cat,iterStat : ${categorizedCommodities}">
+                                <a class="nav-link d-flex m-2 py-2 bg-light rounded-pill text-dark"
+                                th:href="'#tab-' + ${iterStat.index}"
+                                data-bs-toggle="pill"
+                                role="tab"
+                                th:text="${cat.key}">
+                                    Category
+                                </a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
 
                 <div class="tab-content">
                     <div class="tab-pane fade show active p-0" id="tab-all" role="tabpanel">
@@ -196,13 +202,13 @@
             <div class="row">
                 <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
                     <span class="text-light">
-                        <a href="#"><i class="fas fa-copyright text-light me-2"></i>Your Site Name</a>, All rights reserved.
+                        <a href="#"><i class="fas fa-copyright text-light me-2"></i>Agrolive</a>, All rights reserved.
                     </span>
                 </div>
-                <div class="col-md-6 my-auto text-center text-md-end text-white">
+                <!-- <div class="col-md-6 my-auto text-center text-md-end text-white">
                     Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a>
                     Distributed By <a class="border-bottom" href="https://themewagon.com">ThemeWagon</a>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
