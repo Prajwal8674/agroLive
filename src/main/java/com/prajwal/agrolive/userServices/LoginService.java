@@ -20,6 +20,8 @@ public class LoginService {
             System.out.println("User not found with email: " + email);
             return false; 
         }
+        
+      
 
         System.out.println("User found: " + user);
         System.out.println("Password in DB: " + user.getPassword());
