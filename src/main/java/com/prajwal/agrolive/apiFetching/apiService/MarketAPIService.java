@@ -5,9 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prajwal.agrolive.apiFetching.apiEntity.MarketRecord;
 import com.prajwal.agrolive.apiFetching.apiRepository.MarketRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class MarketAPIService {
@@ -18,61 +24,120 @@ public class MarketAPIService {
     @Autowired
     private MarketRecordRepository marketRecordRepository;
 
-    // Replace YOUR_CORRECT_API_KEY with your actual key
-    private static final String API_URL =
-            "https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?" +
-            "api-key=579b464db66ec23bdd000001cdc3b564546246a772a26393094f5645" +
-            "&format=json" +
-            "&limit=10000" +
-            "&offset=0";
+    private static final String BASE_URL =
+            "https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070";
 
-    public void fetchAndStoreMarketData() {
+    private static final String API_KEY =
+            "579b464db66ec23bdd000001cdc3b564546246a772a26393094f5645";
+
+    private static final DateTimeFormatter API_DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+    // Runs daily at 6 AM IST
+    @Scheduled(cron = "0 0 6 * * ?", zone = "Asia/Kolkata")
+    //@Scheduled(cron = "0 * * * * ?", zone = "Asia/Kolkata")  // runs every minute
+    @Transactional
+    public void fetchLatestMarketData() {
+        System.out.println("Scheduled MarketAPIService started");
+
+        int limit = 1000;
+        int offset = 0;
+        boolean hasMore = true;
+
+        Set<JsonNode> allRecords = new HashSet<>();
+
         try {
-            // Fetch data from API
-            String response = restTemplate.getForObject(API_URL, String.class);
+            // 1️⃣ Fetch all pages
+            while (hasMore) {
+                String apiUrl = BASE_URL +
+                        "?api-key=" + API_KEY +
+                        "&format=json" +
+                        "&limit=" + limit +
+                        "&offset=" + offset;
 
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode rootNode = mapper.readTree(response);
-            JsonNode records = rootNode.path("records");
+                String response = restTemplate.getForObject(apiUrl, String.class);
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode records = mapper.readTree(response).path("records");
 
-            if (records.isArray()) {
-                for (JsonNode node : records) {
-                    String state = node.path("state").asText();
-                    String district = node.path("district").asText();
-                    String market = node.path("market").asText();
-                    String commodity = node.path("commodity").asText();
-                    String variety = node.path("variety").asText();
-                    String date = node.path("arrival_date").asText();
+                if (!records.isArray() || records.isEmpty()) {
+                    hasMore = false;
+                    break;
+                }
 
-                    // Skip if this record already exists in DB
-                    boolean exists = marketRecordRepository.existsByStateAndDistrictAndMarketAndCommodityAndVarietyAndDate(
-                            state, district, market, commodity, variety, date
-                    );
-                    if (exists) continue;
+                records.forEach(allRecords::add);
+                offset += limit; // next page
+            }
 
-                    // Create new record and save
-                    MarketRecord record = new MarketRecord();
-                    record.setState(state);
-                    record.setDistrict(district);
-                    record.setMarket(market);
-                    record.setCommodity(commodity);
-                    record.setVariety(variety);
-                    record.setMin_price(node.path("min_price").asText());
-                    record.setMax_price(node.path("max_price").asText());
-                    record.setModal_price(node.path("modal_price").asText());
-                    record.setDate(date);
+            System.out.println("Total records fetched from API: " + allRecords.size());
 
-                    marketRecordRepository.save(record);
+            // 2️⃣ Find the latest available date
+            String latestDateStr = null;
+            LocalDate maxDate = null;
+            for (JsonNode node : allRecords) {
+                String dateStr = node.path("arrival_date").asText(); // dd/MM/yyyy
+                LocalDate date = LocalDate.parse(dateStr, API_DATE_FORMAT);
+                if (maxDate == null || date.isAfter(maxDate)) {
+                    maxDate = date;
+                    latestDateStr = dateStr;
                 }
             }
 
-            System.out.println("All data fetched and inserted into DB successfully!");
+            if (latestDateStr == null) {
+                System.out.println("No valid dates found in API response");
+                return;
+            }
 
-        } catch (HttpClientErrorException e) {
-            System.err.println("Error fetching data: " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
-            throw e;
+            System.out.println("Latest available API date: " + latestDateStr);
+
+            // 3️⃣ Insert records for latest date only
+            Set<String> insertedKeys = new HashSet<>();
+            for (JsonNode node : allRecords) {
+                String dateStr = node.path("arrival_date").asText();
+                if (!latestDateStr.equals(dateStr)) continue;
+
+                String key = node.path("state").asText() + "|" +
+                        node.path("district").asText() + "|" +
+                        node.path("market").asText() + "|" +
+                        node.path("commodity").asText() + "|" +
+                        node.path("variety").asText() + "|" +
+                        dateStr;
+
+                if (insertedKeys.contains(key)) continue;
+                insertedKeys.add(key);
+
+                boolean exists = marketRecordRepository
+                        .existsByStateAndDistrictAndMarketAndCommodityAndVarietyAndDate(
+                                node.path("state").asText(),
+                                node.path("district").asText(),
+                                node.path("market").asText(),
+                                node.path("commodity").asText(),
+                                node.path("variety").asText(),
+                                dateStr
+                        );
+                if (exists) continue;
+
+                MarketRecord record = new MarketRecord();
+                record.setState(node.path("state").asText());
+                record.setDistrict(node.path("district").asText());
+                record.setMarket(node.path("market").asText());
+                record.setCommodity(node.path("commodity").asText());
+                record.setVariety(node.path("variety").asText());
+                record.setMin_price(node.path("min_price").asText());
+                record.setMax_price(node.path("max_price").asText());
+                record.setModal_price(node.path("modal_price").asText());
+                record.setDate(dateStr);
+
+                marketRecordRepository.save(record);
+            }
+
+            System.out.println("Inserted market data for date: " + latestDateStr);
+
+            // 4️⃣ Delete records older than last 7 days
+            LocalDate threshold = LocalDate.now().minusDays(7);
+            String thresholdStr = threshold.format(API_DATE_FORMAT);
+            marketRecordRepository.deleteByDateBefore(thresholdStr);
+            System.out.println("Deleted records older than: " + thresholdStr);
+
         } catch (Exception e) {
-            System.err.println("Error fetching or storing data: " + e.getMessage());
             e.printStackTrace();
         }
     }

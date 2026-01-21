@@ -1,6 +1,7 @@
 package com.prajwal.agrolive.userController;
-
+import com.prajwal.agrolive.userEntity.User;
 import com.prajwal.agrolive.userServices.LoginService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,16 +21,21 @@ public class LoginController {
     @PostMapping("/login")
     public String loginUser(@RequestParam String email,
                             @RequestParam String password,
+                            HttpSession session,
                             Model model) {
 
-        boolean isValid = loginService.loginCheck(email, password);
+        // 🔹 Get User instead of boolean
+        User user = loginService.loginCheckAndGetUser(email, password);
 
-        if (!isValid) {
+        if (user == null) {
             model.addAttribute("error", "Invalid email or password!");
-            return "login"; // stay on login page
+            return "login";
         }
 
-        // login success
-        return "redirect:/"; // redirect to dashboard page
+        // ✅ SESSION CREATED
+        session.setAttribute("loggedInUser", user);
+        session.setAttribute("email", user.getEmail());
+
+        return "redirect:/";
     }
 }

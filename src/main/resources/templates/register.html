@@ -21,48 +21,84 @@
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/style.css" rel="stylesheet">
 
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      overflow: hidden;
-      background: linear-gradient(135deg, #f0f9ff 0%, #cbebff 100%);
-      font-family: 'Open Sans', sans-serif;
-    }
+<style>
+html, body {
+    height: 100%;
+    margin: 0;
+    background: linear-gradient(135deg, #f0f9ff 0%, #cbebff 100%);
+    font-family: 'Open Sans', sans-serif;
+}
 
-    .login-container {
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+/* Register Section */
+section.register-section {
+    flex: 1;
+    display: flex;
+    justify-content: center; /* horizontally center card */
+    align-items: center;     /* vertically center card */
+    padding: 2rem;
+   padding-top: 120px; /* space for fixed navbar */
 
-    .card {
-      border: none;
-      border-radius: 1rem;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    }
+}
 
-    .form-control {
-      border-radius: 50px;
+/* Card adjustments */
+.card {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    max-width: 600px;
+    width: 100%;
+    overflow-y: auto;
+    max-height: 90vh;
+}
+@media (max-width: 768px) {
+    .register-section {
+        padding-top: 140px; /* extra for small screens if navbar height increases */
     }
+}
 
-    .btn-primary {
-      border-radius: 50px;
-      background: #198754;
-      border: none;
-    }
+/* Center form inside right column */
+.card .col-md-7 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* vertically center form */
+    align-items: center;     /* horizontally center form content */
+    padding: 2rem;
+}
 
-    .btn-primary:hover {
-      background: #157347;
-    }
+/* Make form take full width */
+.card form {
+    width: 100%;
+    max-width: 350px; /* control form width */
+}
 
-    .copyright {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-    }
-  </style>
+.form-control {
+    border-radius: 50px;
+}
+
+.btn-primary, .btn-success {
+    border-radius: 50px;
+    background: #198754;
+    border: none;
+}
+
+.btn-primary:hover, .btn-success:hover {
+    background: #157347;
+}
+
+/* Footer */
+footer.footer {
+    width: 100%;
+    background-color: #000;
+    color: #fff;
+    padding: 1rem 0;
+}
+</style>
+
 </head>
 
 <body>
@@ -96,77 +132,70 @@
     </div>
   </div>
 
-  <section class="d-flex justify-content-center align-items-center min-vh-100 bg-light m-0 p-0 mt-4">
-    <div class="card shadow-lg border-0 rounded-4 overflow-hidden p-0 m-0" style="max-width: 700px; width: 100%;">
-      <div class="row g-0" style="height: 100%;">
+<section class="register-section">
+    <div class="card shadow-lg p-0 m-0">
+        <div class="row g-0">
 
-        <!-- LEFT IMAGE -->
-        <div class="col-md-5 d-none d-md-block p-0 m-0">
-          <img src="img/farmer.jpg" alt="Register Image"
-            class="w-100 h-100" style="object-fit: cover; display: block; border-top-left-radius: 1rem; border-bottom-left-radius: 1rem;">
+            <!-- LEFT IMAGE -->
+            <div class="col-md-5 d-none d-md-block p-0">
+                <img src="img/farmer.jpg" alt="Register Image"
+                    class="w-100 h-100" style="object-fit: cover; border-top-left-radius: 1rem; border-bottom-left-radius: 1rem;">
+            </div>
+
+            <!-- RIGHT FORM -->
+            <div class="col-md-7 bg-white">
+                <h3 class="text-center text-success mb-4 fw-bold">Create Account</h3>
+
+                <form th:action="@{/register}" method="post">
+                    <div class="mb-2">
+                        <label class="form-label small mb-1">Name</label>
+                        <input type="text" class="form-control" name="fullName" placeholder="Enter your name" required>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label small mb-1">Email Address</label>
+                        <input type="email" class="form-control" name="email" placeholder="Enter your email" required>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label small mb-1">Phone Number</label>
+                        <input type="tel" class="form-control" name="phone" placeholder="Enter your phone number" required>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label small mb-1">Password</label>
+                        <input type="password" class="form-control" name="password" placeholder="Create a password" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small mb-1">Confirm Password</label>
+                        <input type="password" class="form-control" name="confirmPassword" placeholder="Re-enter your password" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100">Register</button>
+                </form>
+
+                <p class="text-center mt-3 mb-0">
+                    Already have an account? <a th:href="@{/login}" class="text-success fw-bold">Login</a>
+                </p>
+            </div>
         </div>
-
-        <!-- RIGHT FORM -->
-        <div class="col-md-7 bg-white d-flex flex-column justify-content-center p-4 m-0">
-          <h3 class="text-center text-success mb-3 fw-bold">Create Account</h3>
-
-          <!-- 🔥 Updated Form -->
-          <form th:action="@{/register}" method="post">
-            <div class="mb-2">
-              <label class="form-label small mb-1">Name</label>
-              <input type="text" class="form-control" name="fullName" placeholder="Enter your name" required>
-            </div>
-
-            <div class="mb-2">
-              <label class="form-label small mb-1">Email Address</label>
-              <input type="email" class="form-control" name="email" placeholder="Enter your email" required>
-            </div>
-
-            <div class="mb-2">
-              <label class="form-label small mb-1">Phone Number</label>
-              <input type="tel" class="form-control" name="phone" placeholder="Enter your phone number" required>
-            </div>
-
-            <div class="mb-2">
-              <label class="form-label small mb-1">Password</label>
-              <input type="password" class="form-control" name="password" placeholder="Create a password" required>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label small mb-1">Confirm Password</label>
-              <input type="password" class="form-control" name="confirmPassword" placeholder="Re-enter your password" required>
-            </div>
-
-            <button type="submit" class="btn btn-success w-100">Register</button>
-          </form>
-
-          <p class="text-center mt-3 mb-0">
-            Already have an account?
-            <a th:href="@{/login}" class="text-success fw-bold">Login</a>
-          </p>
-        </div>
-      </div>
     </div>
-  </section>
+</section>
 
-
-        <!-- Copyright Start -->
-        <!-- <div class="container-fluid copyright bg-dark py-4">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                        <span class="text-light"><a href="#"><i class="fas fa-copyright text-light me-2"></i>Agrolive</a>, All right reserved.</span>
-                    </div>
-                    <div class="col-md-6 my-auto text-center text-md-end text-white">
-                        /*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/
-                        /*** If you'd like to use the template without the below author’s credit link/attribution link/backlink, ***/-->
-                        <!--/*** you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". ***/-->
-                        Designed By <a class="border-bottom" href="#">HTML Codex</a> Distributed By <a class="border-bottom" href="https://themewagon.com">ThemeWagon</a>
-                    </div>
+   <!-- Footer -->
+    <div class="container-fluid copyright bg-dark py-4 footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    <span class="text-light">
+                        <a href="#"><i class="fas fa-copyright text-light me-2"></i>Agrolive</a>, All right reserved.
+                    </span>
                 </div>
             </div>
         </div>
-        <!-- Copyright End -->
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

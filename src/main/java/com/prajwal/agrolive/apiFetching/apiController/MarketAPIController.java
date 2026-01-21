@@ -17,20 +17,28 @@ public class MarketAPIController {
     private MarketRecordRepository marketRecordRepository;
 
     @GetMapping("/allCommodities")
-    public String getAllCommoditiesPage(
-            Model model,
+    public String getAllCommodities(
+            @RequestParam(required = false) String commodity,
+            @RequestParam(required = false) String state,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "50") int size
+            @RequestParam(defaultValue = "50") int size,
+            Model model
     ) {
-        long totalRecords = marketRecordRepository.count();
-        int totalPages = (int) Math.ceil((double) totalRecords / size);
 
-        if (page < 0) page = 0;
-        if (page >= totalPages) page = 0;
+        Page<MarketRecord> recordsPage;
 
-        Page<MarketRecord> recordsPage = marketRecordRepository.findAll(PageRequest.of(page, size));
+        if (commodity != null && !commodity.isEmpty() && state != null && !state.isEmpty()) {
+            // Filtered data
+            recordsPage = marketRecordRepository
+                    .findByCommodityIgnoreCaseAndStateIgnoreCase(
+                            commodity, state, PageRequest.of(page, size)
+                    );
+        } else {
+            // All data
+            recordsPage = marketRecordRepository.findAll(PageRequest.of(page, size));
+        }
 
-        // Determine pagination window (e.g., 5 pages max)
+        int totalPages = recordsPage.getTotalPages();
         int startPage = Math.max(0, page - 2);
         int endPage = Math.min(totalPages - 1, page + 2);
 
@@ -40,8 +48,10 @@ public class MarketAPIController {
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
 
+        // Send filter values back to UI
+        model.addAttribute("commodity", commodity);
+        model.addAttribute("state", state);
+
         return "allCommodities";
     }
-
-
 }
