@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import com.prajwal.agrolive.userEntity.User;
 import com.prajwal.agrolive.userRepository.UserRepo;
 
+import java.util.Optional;
+
 @Service
 public class LoginService {
 
@@ -14,16 +16,19 @@ public class LoginService {
 
     public User loginCheckAndGetUser(String email, String password) {
 
-        User user = userRepo.findByEmail(email);
-
-        if (user == null) {
-            return null;
+        // Method 1: Using Optional.orElse()
+        Optional<User> optionalUser = userRepo.findByEmail(email);
+        
+        if (!optionalUser.isPresent()) {
+            return null; // User not found
         }
+        
+        User user = optionalUser.get();
 
         if (user.getPassword().equals(password)) {
             return user; // ✅ success
         }
 
-        return null;
+        return null; // Password doesn't match
     }
 }
