@@ -31,10 +31,9 @@
         }
 
         .content-wrapper {
-            flex: 1; /* take remaining space above footer */
+            flex: 1;
         }
 
-        /* Footer same as Market page */
         .footer {
             background-color: #000;
             color: #fff;
@@ -47,23 +46,23 @@
             text-decoration: none;
         }
 
-        /* Pagination styling */
         .pagination {
             display: flex;
             justify-content: center;
             gap: 5px;
             margin-bottom: 1rem;
         }
+
         .pagination .page-item.active .page-link {
             background-color: #81c408;
             border-color: #81c408;
             color: white;
         }
+
         .pagination .page-link {
             color: #81c408;
         }
 
-        /* Table wrapper */
         .table-wrapper {
             overflow-x: auto;
         }
@@ -77,22 +76,28 @@
     <div class="container-fluid fixed-top">
         <div class="container px-0">
             <nav class="navbar navbar-light bg-white navbar-expand-xl">
-                <a href="index.html" class="navbar-brand"><h1 class="text-primary display-6">AgroLive</h1></a>
-                <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <a th:href="@{/}" class="navbar-brand">
+                    <h1 class="text-primary display-6">AgroLive</h1>
+                </a>
+                <button class="navbar-toggler py-2 px-3" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                     <span class="fa fa-bars text-primary"></span>
                 </button>
                 <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
                     <div class="navbar-nav mx-auto">
-                        <a th:href="@{/}" class="nav-item nav-link active">Home</a>
+                        <a th:href="@{/}" class="nav-item nav-link">Home</a>
                         <a href="#" class="nav-item nav-link">About</a>
-                        <a th:href="@{/market}" class="nav-item nav-link">Market</a>
+                        <a th:href="@{/market}" class="nav-item nav-link active">Market</a>
                         <a th:href="@{/login}" class="nav-item nav-link">Login</a>
-                        <a href="contact.html" class="nav-item nav-link">Contact</a>
+                        <a th:href="@{/contact}" class="nav-item nav-link">Contact</a>
                     </div>
-                    <div class="d-flex m-3 me-0">
+                    <div class="d-f lex m-3 me-0">
                         <a href="#" class="position-relative me-4 my-auto">
                             <i class="fa fa-shopping-bag fa-2x"></i>
-                            <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">3</span>
+                            <span class="position-absolute bg-secondary rounded-circle
+                                  d-flex align-items-center justify-content-center
+                                  text-dark px-1"
+                                  style="top:-5px; left:15px; height:20px; min-width:20px;">3</span>
                         </a>
                         <a th:href="@{/register}" class="my-auto">
                             <i class="fas fa-user fa-2x"></i>
@@ -108,88 +113,118 @@
     <div class="content-wrapper container-fluid py-5">
         <div class="container py-5">
 
-            <!-- 🔍 Search Filters -->
+            <!-- Search Filters -->
             <div class="row mb-4">
                 <div class="col-md-4 mb-3">
-                    <input type="text" id="searchCommodity" class="form-control" placeholder="Search by Commodity...">
+                    <input type="text" id="searchCommodity" class="form-control"
+                           placeholder="Search by Commodity...">
                 </div>
                 <div class="col-md-4 mb-3">
-                    <input type="text" id="searchState" class="form-control" placeholder="Search by State...">
+                    <input type="text" id="searchState" class="form-control"
+                           placeholder="Search by State...">
                 </div>
                 <div class="col-md-4 mb-3">
-                    <input type="text" id="searchDistrict" class="form-control" placeholder="Search by District...">
+                    <input type="text" id="searchDistrict" class="form-control"
+                           placeholder="Search by District...">
                 </div>
             </div>
 
-            <!-- 🧾 Table -->
-           <div class="table-responsive table-wrapper">
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Commodity</th>
-            <th>Variety</th>
-            <th>State</th>
-            <th>District</th>
-            <th>Market</th>
-            <th>Min Price</th>
-            <th>Max Price</th>
-            <th>Modal Price</th>
-            <th>Date</th>
-        </tr>
-        </thead>
+            <!-- Table -->
+            <div class="table-responsive table-wrapper">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Commodity</th>
+                        <th>Variety</th>
+                        <th>State</th>
+                        <th>District</th>
+                        <th>Market</th>
+                        <th>Min Price</th>
+                        <th>Max Price</th>
+                        <th>Modal Price</th>
+                        <th>Date</th>
+                    </tr>
+                    </thead>
 
-        <tbody>
-        <!-- Check if there are records -->
-        <tr th:if="${#lists.isEmpty(recordsPage.content)}">
-            <td colspan="9" class="text-center text-primary fw-bold">No Records Found</td>
-        </tr>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(recordsPage.content)}">
+                        <td colspan="9"
+                            class="text-center text-primary fw-bold">
+                            No Records Found
+                        </td>
+                    </tr>
 
-        <!-- Display records if available -->
-        <tr th:each="item : ${recordsPage.content}">
-            <td th:text="${item.commodity}"></td>
-            <td th:text="${item.variety}"></td>
-            <td th:text="${item.state}"></td>
-            <td th:text="${item.district}"></td>
-            <td th:text="${item.market}"></td>
-            <td th:text="${item.min_price}"></td>
-            <td th:text="${item.max_price}"></td>
-            <td th:text="${item.modal_price}"></td>
-            <td th:text="${item.date}"></td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+                    <tr th:each="item : ${recordsPage.content}">
+                        <td th:text="${item.commodity}"></td>
+                        <td th:text="${item.variety}"></td>
+                        <td th:text="${item.state}"></td>
+                        <td th:text="${item.district}"></td>
+                        <td th:text="${item.market}"></td>
+                        <td th:text="${item.min_price}"></td>
+                        <td th:text="${item.max_price}"></td>
+                        <td th:text="${item.modal_price}"></td>
+                        <td th:text="${item.date}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 
-            <!-- Pagination -->
+            <!-- ✅ FIXED Pagination (ONLY CHANGE) -->
             <nav>
                 <ul class="pagination">
+
+                    <!-- Previous -->
                     <li class="page-item" th:classappend="${currentPage==0}?'disabled'">
-                        <a class="page-link" th:href="@{/allCommodities(page=${currentPage-1})}">&laquo;</a>
+                        <a class="page-link"
+                           th:href="@{/allCommodities(
+                                page=${currentPage-1},
+                                size=${recordsPage.size},
+                                commodity=${commodity},
+                                state=${state}
+                           )}">&laquo;</a>
                     </li>
 
+                    <!-- Page Numbers -->
                     <li class="page-item"
                         th:each="i : ${#numbers.sequence(startPage,endPage)}"
                         th:classappend="${i==currentPage}?'active'">
-                        <a class="page-link" th:text="${i+1}" th:href="@{/allCommodities(page=${i})}"></a>
+                        <a class="page-link"
+                           th:text="${i+1}"
+                           th:href="@{/allCommodities(
+                                page=${i},
+                                size=${recordsPage.size},
+                                commodity=${commodity},
+                                state=${state}
+                           )}"></a>
                     </li>
 
-                    <li class="page-item" th:classappend="${currentPage+1>=totalPages}?'disabled'">
-                        <a class="page-link" th:href="@{/allCommodities(page=${currentPage+1})}">&raquo;</a>
+                    <!-- Next -->
+                    <li class="page-item"
+                        th:classappend="${currentPage+1>=totalPages}?'disabled'">
+                        <a class="page-link"
+                           th:href="@{/allCommodities(
+                                page=${currentPage+1},
+                                size=${recordsPage.size},
+                                commodity=${commodity},
+                                state=${state}
+                           )}">&raquo;</a>
                     </li>
+
                 </ul>
             </nav>
 
         </div>
     </div>
-    <!-- End Content Wrapper -->
+    <!-- End Content -->
 
-   <!-- Footer -->
+    <!-- Footer -->
     <div class="container-fluid copyright bg-dark py-4 footer">
         <div class="container">
             <div class="row">
                 <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
                     <span class="text-light">
-                        <a href="#"><i class="fas fa-copyright text-light me-2"></i>Agrolive</a>, All right reserved.
+                        <a href="#"><i class="fas fa-copyright text-light me-2"></i>AgroLive</a>,
+                        All right reserved.
                     </span>
                 </div>
             </div>
@@ -197,7 +232,6 @@
     </div>
 
 </div>
-<!-- End Page Wrapper -->
 
 <!-- JS -->
 <script>
@@ -208,7 +242,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const districtInput = document.getElementById("searchDistrict");
     const rows = document.querySelectorAll("table tbody tr");
 
-    // 🔗 Read URL Params
     const params = new URLSearchParams(window.location.search);
     const commodityParam = params.get("commodity");
     const stateParam = params.get("state");
@@ -239,7 +272,6 @@ document.addEventListener("DOMContentLoaded", function () {
     stateInput.addEventListener("keyup", filterTable);
     districtInput.addEventListener("keyup", filterTable);
 
-    // 🚀 Auto-filter on page load
     filterTable();
 });
 </script>

@@ -33,8 +33,8 @@ public class MarketAPIService {
     private static final DateTimeFormatter API_DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     // Runs daily at 6 AM IST
-    @Scheduled(cron = "0 0 6 * * ?", zone = "Asia/Kolkata")
-    //@Scheduled(cron = "0 * * * * ?", zone = "Asia/Kolkata")  // runs every minute
+   // @Scheduled(cron = "0 0 6 * * ?", zone = "Asia/Kolkata")
+    @Scheduled(cron = "0 * * * * ?", zone = "Asia/Kolkata")  // runs every minute
     @Transactional
     public void fetchLatestMarketData() {
         System.out.println("Scheduled MarketAPIService started");
@@ -69,7 +69,6 @@ public class MarketAPIService {
 
             System.out.println("Total records fetched from API: " + allRecords.size());
 
-            // 2️⃣ Find the latest available date
             String latestDateStr = null;
             LocalDate maxDate = null;
             for (JsonNode node : allRecords) {

@@ -13,10 +13,9 @@ public class AgroliveApplication {
     public static void main(String[] args) {
         SpringApplication.run(AgroliveApplication.class, args);
     }
-    
+    	
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
-
 }
