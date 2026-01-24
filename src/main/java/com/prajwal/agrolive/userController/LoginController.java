@@ -7,21 +7,22 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class LoginController {
 
-    @GetMapping("/login")
-    public String loginPage(@RequestParam(value = "error", required = false) String error,
-                           @RequestParam(value = "logout", required = false) String logout,
-                           Model model) {
-        
-        if (error != null) {
-            model.addAttribute("error", "Invalid email or password!");
-        }
-        
-        if (logout != null) {
-            model.addAttribute("message", "You have been logged out successfully!");
-        }
-        
-        return "login";
+  @GetMapping("/login")
+  public String loginPage(
+      @RequestParam(value = "error", required = false) String error,
+      @RequestParam(value = "logout", required = false) String logout,
+      Model model) {
+
+    if (error != null) {
+      model.addAttribute("error", "Invalid email or password!");
     }
-    
-    // Note: POST /login is handled automatically by Spring Security
+
+    if (logout != null) {
+      model.addAttribute("message", "You have been logged out successfully!");
+    }
+
+    return "login";
+  }
+
+  // Note: POST /login is handled automatically by Spring Security
 }

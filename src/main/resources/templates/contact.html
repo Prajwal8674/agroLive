@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Agrolive</title>
+    <title>Agrolive - Smart Agricultural Price Tracking Platform</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -50,9 +50,15 @@
                             <a th:href="@{/}" class="nav-item nav-link">Home</a>
                             <a href="#" class="nav-item nav-link">About</a>
                             <a th:href="@{/market}" class="nav-item nav-link">Market</a>
-                            <a th:href="@{/login}" class="nav-item nav-link">Login</a>
                             <a th:href="@{/contact}" class="nav-item nav-link active">Contact</a>
-                        </div>
+                        <!-- Show Login only when NOT authenticated -->
+                        <a th:href="@{/login}" class="nav-item nav-link" 
+                        sec:authorize="!isAuthenticated()">Login</a>
+                        
+                        <!-- Show Logout only when authenticated -->
+                        <a th:href="@{/logout}" class="nav-item nav-link" 
+                        sec:authorize="isAuthenticated()">Logout</a>                            
+                    </div>
                         <div class="d-flex m-3 me-0">
                             <!-- <a href="#" class="position-relative me-4 my-auto">
                                 <i class="fa fa-shopping-bag fa-2x"></i>
