@@ -191,9 +191,12 @@
                                                      style="cursor:pointer"
                                                      th:attr="data-name=${item}"
                                                      onclick="openStatePopup(this)">
-                                                    <div class="fruite-img">
-                                                        <img th:src="@{'img/agroLive.png'}" class="img-fluid rounded-top" alt="" />
-                                                    </div>
+                                                      <div class="fruite-img">
+    <img th:src="${imageUrls.getOrDefault(item, 'https://source.unsplash.com/300x300/?agriculture')}" 
+         th:onerror="'this.onerror=null; this.src=\'/img/agroLive.png\';'"
+         class="img-fluid rounded-top" 
+         th:alt="${item}" />
+</div>
                                                     <div class="p-2 border border-secondary border-top-0 rounded-bottom">
                                                         <h6 class="mb-0" th:text="${item}">Item Name</h6>
                                                     </div>
@@ -214,9 +217,12 @@
                                              style="cursor:pointer"
                                              th:attr="data-name=${item}"
                                              onclick="openStatePopup(this)">
-                                            <div class="fruite-img">
-                                                <img th:src="@{'img/agroLive.png'}" class="img-fluid rounded-top" alt="" />
-                                            </div>
+                                         <div class="fruite-img">
+    <img th:src="${imageUrls.getOrDefault(item, 'https://source.unsplash.com/300x300/?agriculture')}" 
+         th:onerror="'this.onerror=null; this.src=\'/img/agroLive.png\';'"
+         class="img-fluid rounded-top" 
+         th:alt="${item}" />
+</div>
                                             <div class="p-2 border border-secondary border-top-0 rounded-bottom">
                                                 <h6 class="mb-0" th:text="${item}">Item Name</h6>
                                             </div>

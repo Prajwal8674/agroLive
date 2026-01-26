@@ -70,7 +70,7 @@ public class RegisterController {
       newUser.setName(fullName);
       newUser.setEmail(email);
       newUser.setPhone(phone);
-      newUser.setPassword(passwordEncoder.encode(password)); // 🔐 ENCRYPT PASSWORD
+      newUser.setPassword(passwordEncoder.encode(password)); 
       newUser.setRole("ROLE_USER");
       newUser.setEnabled(true);
 
