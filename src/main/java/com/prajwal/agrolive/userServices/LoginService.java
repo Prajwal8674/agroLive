@@ -1,5 +1,7 @@
 package com.prajwal.agrolive.userServices;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,21 +11,23 @@ import com.prajwal.agrolive.userRepository.UserRepo;
 @Service
 public class LoginService {
 
-    @Autowired
-    private UserRepo userRepo;
+  @Autowired private UserRepo userRepo;
 
-    public User loginCheckAndGetUser(String email, String password) {
+  public User loginCheckAndGetUser(String email, String password) {
 
-        User user = userRepo.findByEmail(email);
+    // Method 1: Using Optional.orElse()
+    Optional<User> optionalUser = userRepo.findByEmail(email);
 
-        if (user == null) {
-            return null;
-        }
-
-        if (user.getPassword().equals(password)) {
-            return user; // ✅ success
-        }
-
-        return null;
+    if (!optionalUser.isPresent()) {
+      return null; // User not found
     }
+
+    User user = optionalUser.get();
+
+    if (user.getPassword().equals(password)) {
+      return user; // ✅ success
+    }
+
+    return null; // Password doesn't match
+  }
 }

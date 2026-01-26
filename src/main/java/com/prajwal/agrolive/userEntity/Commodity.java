@@ -1,5 +1,3 @@
 package com.prajwal.agrolive.userEntity;
 
-public class Commodity {
-
-}
+public class Commodity {}

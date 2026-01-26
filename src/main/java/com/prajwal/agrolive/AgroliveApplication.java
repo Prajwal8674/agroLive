@@ -7,15 +7,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
-@EnableScheduling  
-
+@EnableScheduling
 public class AgroliveApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(AgroliveApplication.class, args);
-    }
-    	
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(AgroliveApplication.class, args);
+  }
+
+  @Bean
+  public RestTemplate restTemplate() {
+    return new RestTemplate();
+  }
 }

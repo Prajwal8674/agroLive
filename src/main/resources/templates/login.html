@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>AgroLive</title>
+  <title>Login - AgroLive</title>
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
   <!-- Google Fonts -->
@@ -49,14 +49,20 @@
       border-radius: 50px;
     }
 
-    .btn-primary {
+    .btn-primary, .btn-success {
       border-radius: 50px;
       background: #198754;
       border: none;
     }
 
-    .btn-primary:hover {
+    .btn-primary:hover, .btn-success:hover {
       background: #157347;
+    }
+
+    /* Error and Success alerts */
+    .alert {
+      border-radius: 10px;
+      margin-bottom: 20px;
     }
 
     /* Hide footer on small screens to ensure no scroll */
@@ -74,7 +80,7 @@
   <div class="container-fluid fixed-top">
     <div class="container px-0">
       <nav class="navbar navbar-light bg-white navbar-expand-xl">
-        <a th:href="@{/index}" class="navbar-brand">
+        <a th:href="@{/}" class="navbar-brand">
           <h1 class="text-primary display-6">AgroLive</h1>
         </a>
         <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse"
@@ -82,15 +88,15 @@
           <span class="fa fa-bars text-primary"></span>
         </button>
         <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
-           <div class="navbar-nav mx-auto">
-                            <a th:href="@{/}" class="nav-item nav-link">Home</a>
-                            <a href="#" class="nav-item nav-link">About</a>
-                            <a th:href="@{/market}" class="nav-item nav-link">Market</a>
-                            <a th:href="@{/login}" class="nav-item nav-link active">Login</a>
-                            <a th:href="@{/contact}" class="nav-item nav-link">Contact</a>
-                        </div>
+          <div class="navbar-nav mx-auto">
+            <a th:href="@{/}" class="nav-item nav-link">Home</a>
+            <a href="#" class="nav-item nav-link">About</a>
+            <a th:href="@{/market}" class="nav-item nav-link">Market</a>
+            <a th:href="@{/login}" class="nav-item nav-link active">Login</a>
+            <a th:href="@{/contact}" class="nav-item nav-link">Contact</a>
+          </div>
           <div class="d-flex m-3 me-0">
-            <a th:href="@{/login}" class="my-auto">
+            <a th:href="@{/register}" class="my-auto">
               <i class="fas fa-user fa-2x"></i>
             </a>
           </div>
@@ -99,67 +105,96 @@
     </div>
   </div>
 
-<section class="d-flex justify-content-center align-items-center min-vh-100 bg-light m-0 p-0">
-  <div class="card shadow-lg border-0 rounded-4 overflow-hidden p-0 m-0" style="max-width: 850px; width: 100%;">
+  <section class="d-flex justify-content-center align-items-center min-vh-100 bg-light m-0 p-0">
+    <div class="card shadow-lg border-0 rounded-4 overflow-hidden p-0 m-0" style="max-width: 850px; width: 100%;">
 
-    <div class="row g-0" style="height: 100%;">
+      <div class="row g-0" style="height: 100%;">
 
-      <!-- LEFT SIDE IMAGE -->
-      <div class="col-md-6 d-none d-md-block p-0 m-0">
-        <img src="img/farmer.jpg"
-             alt="Login Image"
-             class="w-100 h-100"
-             style="object-fit: cover; display: block; border-top-left-radius: 1rem; border-bottom-left-radius: 1rem;">
-      </div>
-
-      <!-- RIGHT SIDE FORM -->
-      <div class="col-md-6 bg-white d-flex flex-column justify-content-center p-5 m-0">
-        <h3 class="text-center text-success mb-4 fw-bold">AgroLive Login</h3>
-
-            <form th:action="@{/login}" method="post">
-      <div class="mb-3">
-        <label class="form-label">Email Address</label>
-        <input type="email" name="email" class="form-control rounded-pill" placeholder="Enter your email" required>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">Password</label>
-        <input type="password" name="password" class="form-control rounded-pill" placeholder="Enter your password" required>
-      </div>
-
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-          <input type="checkbox" id="remember" class="form-check-input">
-          <label for="remember" class="form-check-label">Remember me</label>
+        <!-- LEFT SIDE IMAGE -->
+        <div class="col-md-6 d-none d-md-block p-0 m-0">
+          <img src="img/farmer.jpg"
+               alt="Login Image"
+               class="w-100 h-100"
+               style="object-fit: cover; display: block; border-top-left-radius: 1rem; border-bottom-left-radius: 1rem;">
         </div>
-        <a href="#" class="text-success text-decoration-none">Forgot Password?</a>
+
+        <!-- RIGHT SIDE FORM -->
+        <div class="col-md-6 bg-white d-flex flex-column justify-content-center p-5 m-0">
+          <h3 class="text-center text-success mb-4 fw-bold">AgroLive Login</h3>
+
+          <!-- Success Message (after registration or logout) -->
+          <div th:if="${success}" class="alert alert-success" role="alert">
+            <i class="fas fa-check-circle"></i> <span th:text="${success}"></span>
+          </div>
+
+          <!-- Logout Message -->
+          <div th:if="${message}" class="alert alert-info" role="alert">
+            <i class="fas fa-info-circle"></i> <span th:text="${message}"></span>
+          </div>
+
+          <!-- Error Message -->
+          <div th:if="${error}" class="alert alert-danger" role="alert">
+            <i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span>
+          </div>
+
+          <!-- Spring Security Login Form -->
+          <!-- IMPORTANT: 
+               - name="username" is required by Spring Security (even though we use email)
+               - name="password" is required by Spring Security
+               - th:action="@{/login}" with method="post"
+          -->
+          <form th:action="@{/login}" method="post">
+            <div class="mb-3">
+              <label class="form-label">Email Address</label>
+              <input type="email" 
+                     name="username" 
+                     class="form-control rounded-pill" 
+                     placeholder="Enter your email" 
+                     required
+                     autofocus>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              <input type="password" 
+                     name="password" 
+                     class="form-control rounded-pill" 
+                     placeholder="Enter your password" 
+                     required>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <input type="checkbox" id="remember" name="remember-me" class="form-check-input">
+                <label for="remember" class="form-check-label">Remember me</label>
+              </div>
+              <a href="#" class="text-success text-decoration-none">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="btn btn-success w-100 rounded-pill py-2">Login</button>
+          </form>
+
+          <p class="text-center mt-3 mb-0">Don't have an account?
+            <a th:href="@{/register}" class="text-success fw-bold">Register</a>
+          </p>
+        </div>
       </div>
+    </div>
+  </section>
 
-      <button type="submit" class="btn btn-success w-100 rounded-pill py-2">Login</button>
-    </form>
-
-
-        <p class="text-center mt-3 mb-0">Don't have an account?
-          <a th:href="@{/register}" class="text-success fw-bold">Register</a>
-        </p>
+  <!-- Copyright Start -->
+  <div class="container-fluid copyright bg-dark py-4">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+          <span class="text-light">
+            <a href="#"><i class="fas fa-copyright text-light me-2"></i>Agrolive</a>, All right reserved.
+          </span>
+        </div>
       </div>
     </div>
   </div>
-</section>
-
- 
-        <!-- Copyright Start -->
-        <div class="container-fluid copyright bg-dark py-4">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                        <span class="text-light"><a href="#"><i class="fas fa-copyright text-light me-2"></i>Agrolive</a>, All right reserved.</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Copyright End -->
-
+  <!-- Copyright End -->
 
   <!-- JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
