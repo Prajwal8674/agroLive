@@ -19,6 +19,10 @@ public interface MarketRecordRepository extends JpaRepository<MarketRecord, Long
   void deleteByDateBefore(String date);
 
   // ✅ NEW: filter by commodity + state
-  Page<MarketRecord> findByCommodityIgnoreCaseAndStateIgnoreCase(
-      String commodity, String state, PageRequest pageRequest);
+ Page<MarketRecord> findByCommodityIgnoreCaseAndStateIgnoreCaseOrderByDateDesc(
+    String commodity,
+    String state,
+    PageRequest pageRequest
+);
+
 }

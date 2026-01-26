@@ -29,7 +29,7 @@ public class MarketAPIController {
     if (commodity != null && !commodity.isEmpty() && state != null && !state.isEmpty()) {
       // Filtered data
       recordsPage =
-          marketRecordRepository.findByCommodityIgnoreCaseAndStateIgnoreCase(
+          marketRecordRepository.findByCommodityIgnoreCaseAndStateIgnoreCaseOrderByDateDesc(
               commodity, state, PageRequest.of(page, size));
     } else {
       // All data
