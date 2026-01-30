@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -39,7 +40,12 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.authorizeHttpRequests(
+    http
+        // ✅ CSRF Configuration - Disable CSRF for API endpoints
+        .csrf(csrf -> csrf
+            .ignoringRequestMatchers("/api/**")
+        )
+        .authorizeHttpRequests(
             auth ->
                 auth
                     // ✅ Public pages - NO LOGIN REQUIRED
@@ -57,7 +63,7 @@ public class SecurityConfig {
                     .permitAll()
 
                     // 🔒 Protected pages - LOGIN REQUIRED
-                    .requestMatchers("/market", "/allCommodities", "/contact", "/api/**")
+                    .requestMatchers("/market", "/allCommodities", "/contact", "/favorites", "/api/**")
                     .authenticated()
 
                     // Any other request requires authentication
@@ -78,9 +84,7 @@ public class SecurityConfig {
                     .invalidateHttpSession(true)
                     .deleteCookies("JSESSIONID")
                     .permitAll()
-                    .logoutRequestMatcher(
-                        new org.springframework.security.web.util.matcher.AntPathRequestMatcher(
-                            "/logout", "GET")))
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")))
         .sessionManagement(session -> session.maximumSessions(1).maxSessionsPreventsLogin(false));
 
     return http.build();

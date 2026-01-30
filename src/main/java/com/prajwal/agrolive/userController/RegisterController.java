@@ -31,7 +31,7 @@ public class RegisterController {
       Model model) {
 
     System.out.println("Registration attempt for: " + email);
-
+`                                                                                                                                                                                 
     // Validation
     if (fullName == null || fullName.trim().isEmpty()) {
       model.addAttribute("error", "Full name is required!");

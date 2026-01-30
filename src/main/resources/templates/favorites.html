@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="utf-8">
+    <title>My Favorites - Agrolive</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+        }
+
+        .page-wrapper {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-wrapper {
+            flex: 1;
+        }
+
+        .footer {
+            background-color: #000;
+            color: #fff;
+            padding: 1rem 0;
+            text-align: center;
+        }
+
+        .footer a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .favorite-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .favorite-card:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .favorite-card .commodity-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #81c408;
+            margin-bottom: 0.5rem;
+        }
+
+        .favorite-card .detail-row {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .favorite-card .detail-row i {
+            width: 20px;
+            color: #81c408;
+        }
+
+        .favorite-card .added-date {
+            color: #999;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .remove-btn {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .remove-btn:hover {
+            background-color: #ff3333;
+        }
+
+        .remove-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .view-prices-btn {
+            background-color: #81c408;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .view-prices-btn:hover {
+            background-color: #6da307;
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, #81c408 0%, #6da307 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-wrapper">
+
+        <!-- Navbar start -->
+        <div class="container-fluid fixed-top">
+            <div class="container px-0">
+                <nav class="navbar navbar-light bg-white navbar-expand-xl">
+                    <a th:href="@{/}" class="navbar-brand">
+                        <h1 class="text-primary display-6">AgroLive</h1>
+                    </a>
+                    <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarCollapse">
+                        <span class="fa fa-bars text-primary"></span>
+                    </button>
+                    <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
+                        <div class="navbar-nav mx-auto">
+                            <a th:href="@{/}" class="nav-item nav-link">Home</a>
+                            <a href="#" class="nav-item nav-link">About</a>
+                            <a th:href="@{/market}" class="nav-item nav-link">Market</a>
+                            <a th:href="@{/contact}" class="nav-item nav-link">Contact</a>
+                            <a th:href="@{/favorites}" class="nav-item nav-link active">
+                                <i class="fas fa-heart"></i> My Favorites
+                            </a>
+                            <a th:href="@{/logout}" class="nav-item nav-link">Logout</a>
+                        </div>
+
+                        <div class="d-flex m-3 me-0">
+                            <a th:href="@{/register}" class="my-auto">
+                                <i class="fas fa-user fa-2x"></i>
+                            </a>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!-- Navbar End -->
+
+        <!-- Main Content -->
+        <div class="content-wrapper container-fluid py-5">
+            <div class="container py-5">
+
+                <!-- Page Header -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2 class="text-primary">
+                            <i class="fas fa-heart me-2"></i>My Favorite Commodities
+                        </h2>
+                        <p class="text-muted">Track prices for your favorite agricultural commodities</p>
+                    </div>
+                </div>
+
+                <!-- Stats Card -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="stats-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h3 class="mb-0" th:text="${favoritesCount}">0</h3>
+                                    <p class="mb-0">Favorite Commodities</p>
+                                </div>
+                                <div>
+                                    <i class="fas fa-heart fa-3x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div th:if="${#lists.isEmpty(favorites)}" class="empty-state">
+                    <i class="fas fa-heart-broken"></i>
+                    <h3>No Favorites Yet</h3>
+                    <p class="text-muted">Start adding commodities to your favorites to track their prices</p>
+                    <a th:href="@{/market}" class="view-prices-btn mt-3">
+                        <i class="fas fa-search me-2"></i>Browse Market
+                    </a>
+                </div>
+
+                <!-- Favorites List -->
+                <div class="row" th:if="${!#lists.isEmpty(favorites)}">
+                    <div class="col-md-6 col-lg-4" th:each="favorite : ${favorites}">
+                        <div class="favorite-card">
+                            <div class="mb-3">
+                                <div class="commodity-name" th:text="${favorite.commodity}">Commodity Name</div>
+                                
+                                <div class="detail-row">
+                                    <i class="fas fa-seedling"></i>
+                                    <strong>Variety:</strong> <span th:text="${favorite.variety}">Variety</span>
+                                </div>
+                                
+                                <div class="detail-row">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <strong>State:</strong> <span th:text="${favorite.state}">State</span>
+                                </div>
+                                
+                                <div class="detail-row">
+                                    <i class="fas fa-map-pin"></i>
+                                    <strong>District:</strong> <span th:text="${favorite.district}">District</span>
+                                </div>
+                                
+                                <div class="detail-row">
+                                    <i class="fas fa-store"></i>
+                                    <strong>Market:</strong> <span th:text="${favorite.market}">Market</span>
+                                </div>
+                                
+                                <div class="added-date">
+                                    <i class="far fa-clock me-1"></i>
+                                    Added: <span
+                                        th:text="${#temporals.format(favorite.addedDate, 'dd MMM yyyy')}">Date</span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <a th:href="@{/allCommodities(commodity=${favorite.commodity}, state=${favorite.state})}"
+                                    class="view-prices-btn flex-grow-1 text-center">
+                                    <i class="fas fa-chart-line me-1"></i>View Prices
+                                </a>
+                                <button class="remove-btn"
+                                    th:attr="data-commodity=${favorite.commodity}, 
+                                             data-variety=${favorite.variety},
+                                             data-state=${favorite.state}, 
+                                             data-district=${favorite.district},
+                                             data-market=${favorite.market}"
+                                    onclick="removeFavorite(this)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- End Content -->
+
+        <!-- Footer -->
+        <div class="container-fluid copyright bg-dark py-4 footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                        <span class="text-light">
+                            <a href="#"><i class="fas fa-copyright text-light me-2"></i>AgroLive</a>,
+                            All right reserved.
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JS -->
+    <script>
+        function removeFavorite(button) {
+            const commodity = button.getAttribute('data-commodity');
+            const variety = button.getAttribute('data-variety');
+            const state = button.getAttribute('data-state');
+            const district = button.getAttribute('data-district');
+            const market = button.getAttribute('data-market');
+
+            if (!confirm('Are you sure you want to remove this commodity from favorites?')) {
+                return;
+            }
+
+            // Disable button to prevent double-clicking
+            button.disabled = true;
+            const originalHTML = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            fetch('/api/favorites/toggle', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `commodity=${encodeURIComponent(commodity)}&variety=${encodeURIComponent(variety)}&state=${encodeURIComponent(state)}&district=${encodeURIComponent(district)}&market=${encodeURIComponent(market)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Reload the page to show updated favorites
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Failed to remove favorite');
+                    button.disabled = false;
+                    button.innerHTML = originalHTML;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+                button.disabled = false;
+                button.innerHTML = originalHTML;
+            });
+        }
+    </script>
+
+</body>
+
+</html>
