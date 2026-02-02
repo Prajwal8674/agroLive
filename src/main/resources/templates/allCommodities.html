@@ -1,10 +1,9 @@
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="utf-8">
-    <title>Agrolive - Smart Agricultural Price Tracking Platform</title>
+    <title>All Commodities - Agrolive</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
     <!-- Google Web Fonts -->
@@ -19,8 +18,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
 
     <style>
         body,
@@ -71,6 +70,49 @@
         .table-wrapper {
             overflow-x: auto;
         }
+
+        /* Favorite Heart Button Styles */
+        .favorite-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            padding: 0;
+            transition: all 0.3s ease;
+        }
+
+        .favorite-btn i {
+            color: #ccc;
+            transition: all 0.3s ease;
+        }
+
+        .favorite-btn.favorited i {
+            color: #ff4d4d;
+        }
+
+        .favorite-btn:hover i {
+            transform: scale(1.2);
+        }
+
+        .favorite-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        /* Toast notification */
+        .toast-container {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .custom-toast {
+            min-width: 250px;
+            background-color: white;
+            border-left: 4px solid #81c408;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 
@@ -92,8 +134,13 @@
                         <div class="navbar-nav mx-auto">
                             <a th:href="@{/}" class="nav-item nav-link">Home</a>
                             <a href="#" class="nav-item nav-link">About</a>
-                            <a th:href="@{/market}" class="nav-item nav-link active" >Market</a>
+                            <a th:href="@{/market}" class="nav-item nav-link active">Market</a>
                             <a th:href="@{/contact}" class="nav-item nav-link">Contact</a>
+
+                            <!-- Show Favorites only when authenticated -->
+                            <a th:href="@{/favorites}" class="nav-item nav-link" sec:authorize="isAuthenticated()">
+                                <i class="fas fa-heart"></i> My Favorites
+                            </a>
 
                             <!-- Show Login only when NOT authenticated -->
                             <a th:href="@{/login}" class="nav-item nav-link"
@@ -105,23 +152,6 @@
                         </div>
 
                         <div class="d-flex m-3 me-0">
-                            <!-- Optional: Show username -->
-                            <!-- <span class="my-auto me-3 text-primary" sec:authorize="isAuthenticated()">
-                                Hi, <span sec:authentication="name"></span>
-                            </span>
-
-                            <a th:href="@{/register}" class="my-auto">
-                                <i class="fas fa-user fa-2x"></i>
-                            </a> -->
-                        </div>
-                        <div class="d-flex m-3 me-0">
-                            <!-- <a href="#" class="position-relative me-4 my-auto">
-                            <i class="fa fa-shopping-bag fa-2x"></i>
-                            <span class="position-absolute bg-secondary rounded-circle
-                                  d-flex align-items-center justify-content-center
-                                  text-dark px-1"
-                                  style="top:-5px; left:15px; height:20px; min-width:20px;">3</span>
-                        </a>  -->
                             <a th:href="@{/register}" class="my-auto">
                                 <i class="fas fa-user fa-2x"></i>
                             </a>
@@ -132,9 +162,30 @@
         </div>
         <!-- Navbar End -->
 
+        <!-- Toast Container -->
+        <div class="toast-container">
+            <div id="favoriteToast" class="toast custom-toast" role="alert">
+                <div class="toast-header">
+                    <strong class="me-auto">Notification</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                </div>
+                <div class="toast-body" id="toastMessage">
+                    <!-- Message will be inserted here -->
+                </div>
+            </div>
+        </div>
+
         <!-- Main Content -->
         <div class="content-wrapper container-fluid py-5">
             <div class="container py-5">
+
+                <!-- Page Header -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2 class="text-primary">Market Commodities</h2>
+                        <p class="text-muted">Browse and favorite specific commodities to track prices</p>
+                    </div>
+                </div>
 
                 <!-- Search Filters -->
                 <div class="row mb-4">
@@ -152,9 +203,10 @@
 
                 <!-- Table -->
                 <div class="table-responsive table-wrapper">
-                    <table class="table">
-                        <thead>
+                    <table class="table table-hover">
+                        <thead class="table-light">
                             <tr>
+                                <th sec:authorize="isAuthenticated()">Favorite</th>
                                 <th>Commodity</th>
                                 <th>Variety</th>
                                 <th>State</th>
@@ -169,12 +221,27 @@
 
                         <tbody>
                             <tr th:if="${#lists.isEmpty(recordsPage.content)}">
-                                <td colspan="9" class="text-center text-primary fw-bold">
+                                <td th:colspan="${#authorization.expression('isAuthenticated()') ? 10 : 9}"
+                                    class="text-center text-primary fw-bold">
                                     No Records Found
                                 </td>
                             </tr>
 
-                            <tr th:each="item : ${recordsPage.content}">
+                            <tr th:each="item, iterStat : ${recordsPage.content}">
+                                <!-- Favorite Button (only for authenticated users) -->
+                                <td sec:authorize="isAuthenticated()">
+                                    <button class="favorite-btn"
+                                        th:attr="data-commodity=${item.commodity}, 
+                                                 data-variety=${item.variety},
+                                                 data-state=${item.state},
+                                                 data-district=${item.district},
+                                                 data-market=${item.market},
+                                                 data-row-index=${iterStat.index}"
+                                        th:classappend="${favoriteStatusMap != null && favoriteStatusMap.get(item.commodity + '|' + item.variety + '|' + item.state + '|' + item.district + '|' + item.market)} ? 'favorited' : ''"
+                                        onclick="toggleFavorite(this)">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                </td>
                                 <td th:text="${item.commodity}"></td>
                                 <td th:text="${item.variety}"></td>
                                 <td th:text="${item.state}"></td>
@@ -189,7 +256,7 @@
                     </table>
                 </div>
 
-                <!-- ✅ FIXED Pagination (ONLY CHANGE) -->
+                <!-- Pagination -->
                 <nav>
                     <ul class="pagination">
 
@@ -247,6 +314,9 @@
 
     </div>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
     <!-- JS -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -269,9 +339,13 @@
                 const dVal = districtInput.value.toLowerCase();
 
                 rows.forEach(row => {
-                    const commodity = row.cells[0].innerText.toLowerCase();
-                    const state = row.cells[2].innerText.toLowerCase();
-                    const district = row.cells[3].innerText.toLowerCase();
+                    // Skip empty/no-data rows
+                    if (row.cells.length < 2) return;
+
+                    const cellOffset = row.cells[0].querySelector('.favorite-btn') ? 1 : 0;
+                    const commodity = row.cells[cellOffset].innerText.toLowerCase();
+                    const state = row.cells[cellOffset + 2].innerText.toLowerCase();
+                    const district = row.cells[cellOffset + 3].innerText.toLowerCase();
 
                     row.style.display =
                         commodity.includes(cVal) &&
@@ -288,7 +362,66 @@
 
             filterTable();
         });
+
+        // Toggle Favorite Function - SPECIFIC ROW VERSION
+        function toggleFavorite(button) {
+            const commodity = button.getAttribute('data-commodity');
+            const variety = button.getAttribute('data-variety');
+            const state = button.getAttribute('data-state');
+            const district = button.getAttribute('data-district');
+            const market = button.getAttribute('data-market');
+
+            // Disable button during request
+            button.disabled = true;
+
+            fetch('/api/favorites/toggle', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `commodity=${encodeURIComponent(commodity)}&variety=${encodeURIComponent(variety)}&state=${encodeURIComponent(state)}&district=${encodeURIComponent(district)}&market=${encodeURIComponent(market)}`
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Only toggle THIS specific button (unique row)
+                        if (data.isFavorited) {
+                            button.classList.add('favorited');
+                        } else {
+                            button.classList.remove('favorited');
+                        }
+
+                        // Show toast notification
+                        showToast(data.message);
+                    } else {
+                        showToast(data.message || 'Failed to update favorite', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('An error occurred. Please try again.', 'error');
+                })
+                .finally(() => {
+                    // Re-enable button
+                    button.disabled = false;
+                });
+        }
+
+        // Show Toast Notification
+        function showToast(message, type = 'success') {
+            const toastElement = document.getElementById('favoriteToast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+
+            const toast = new bootstrap.Toast(toastElement, {
+                autohide: true,
+                delay: 3000
+            });
+
+            toast.show();
+        }
     </script>
 
 </body>
+
 </html>
