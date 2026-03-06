@@ -20,9 +20,6 @@ public class FavoriteController {
   @Autowired 
   private FavoriteCommodityService favoriteCommodityService;
 
-  /**
-   * Toggle favorite status (AJAX endpoint)
-   */
   @PostMapping("/api/favorites/toggle")
   @ResponseBody
   public ResponseEntity<Map<String, Object>> toggleFavorite(
@@ -58,9 +55,6 @@ public class FavoriteController {
     }
   }
 
-  /**
-   * Check if commodity is favorited (AJAX endpoint)
-   */
   @GetMapping("/api/favorites/check")
   @ResponseBody
   public ResponseEntity<Map<String, Object>> checkFavorite(
@@ -85,9 +79,6 @@ public class FavoriteController {
     return ResponseEntity.ok(response);
   }
 
-  /**
-   * View user's favorite commodities page
-   */
   @GetMapping("/favorites")
   public String viewFavorites(@AuthenticationPrincipal User user, Model model) {
 
@@ -102,9 +93,6 @@ public class FavoriteController {
     return "favorites";
   }
 
-  /**
-   * Remove favorite (alternative endpoint if needed)
-   */
   @DeleteMapping("/api/favorites/remove")
   @ResponseBody
   public ResponseEntity<Map<String, Object>> removeFavorite(
